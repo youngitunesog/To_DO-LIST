@@ -73,7 +73,9 @@ let dck = new Date();
       
         
         if (dck1 === task.deadline  && task.setreminder) {
+     let taskalert = "This is To Remind you about your todo list Task: " + task.task;
      
+     alert(taskalert)
             this._playReminderSound();
           task.reminderTriggered = true;
         }
