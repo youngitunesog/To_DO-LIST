@@ -1,0 +1,1055 @@
+  <li class="chi">
+    <small class="small">05/07/2015 12:56</small>
+    <h3 class="h3">play game today</h3>
+    <small class="dlist"><strong class="dolist">Do-list-@ : </strong> 05/09/2024 12:06</small>
+    <input id="delete" class="btn" type="button" value="delete">
+    <input type="button" id="edit" class="btn" value="edit">
+
+  </li>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  var form = document.querySelector('#all');
+
+form.addEventListener('submit', collectinputdate);
+
+/*setInterval(()=>{
+  const paramitervalues = form.querySelectorAll('input[name]')[1].name;
+  // Tab to edit
+ if(paramitervalues == 'submit'){
+ 
+ }else{
+   event.stopPropagation(); // Corrected stopPropagation usage
+ }
+},500);*/
+
+class todolistContoller {
+  constructor(edit, deletes, getinputvalue, getcurdate, key, key_data) {
+    this.edit = edit;
+    this.deletes = deletes;
+    this.getinputvalue = getinputvalue;
+    this.getcurdate = getcurdate;
+    this.key = key;
+    this.key_data = key_data;
+  }
+
+  Edit(keys, nodes) {
+    this.key = keys;
+
+    // Use safer node selection based on class or attribute
+    const obj = {
+      data: nodes[3]?.getAttribute('data-value'),  // Use optional chaining to avoid errors
+      time: nodes[5]?.getAttribute('time-data')
+    };
+
+    let stringify = JSON.stringify(obj);
+    this.key_data = stringify;
+
+    let parsedt = JSON.parse(this.key_data);
+    form.querySelector('textarea').value = parsedt.data;
+    form.querySelector('input[name="time"]').value = parsedt.time;
+
+    let subm = form.querySelector('input[name="submit"]');
+    subm.value = 'Commit Changes';
+    subm.setAttribute('name', 'commit');
+    subm.setAttribute('type', 'button');
+    subm.style.backgroundColor = "yellow";
+
+    const keyparent = document.querySelectorAll(`.chi`);
+    if (subm.getAttribute('name') === 'commit') {
+      subm.addEventListener('click', () => {
+        for (var i = 0; i < keyparent.length; i++) {
+          // Tab to edit
+          if (keyparent[i].getAttribute('key-data') === this.key) {
+            console.log(keyparent[i].getAttribute('key-data'));
+            break;
+          }
+        }
+
+        subm.value = 'Add';
+        subm.setAttribute('name', 'submit');
+        subm.style.backgroundColor = "lightblue";
+        form.reset();
+        setTimeout(() => {
+          subm.setAttribute('type', 'submit');
+        }, 50);
+        console.log(form);
+      });
+    }
+  }
+
+  Deletes() {
+    let childel = document.querySelector(`#${this.deletes}`);
+    if (childel && childel.parentElement) {
+      childel.parentElement.remove();
+    } else {
+      console.error('Element not found for deletion');
+    }
+  }
+
+  Creatkey(keynum) {
+    let i = 0;
+    let txt = '';
+    while (i < 10) {
+      // Random 10 numbers
+      let genarateramdomkeyid = Math.floor(Math.random() * keynum);
+      txt += genarateramdomkeyid;
+      i++;
+    }
+    return txt;
+  }
+
+  Getcurdate() {
+    let t = new Date();
+    var ttostring = t.toLocaleString();
+    this.getcurdate = ttostring;
+  }
+
+  Getinputvalue() {
+    this.Getcurdate();
+    const all = document.querySelectorAll('#all input[type="datetime-local"], #all textarea');
+
+    if (all.length >= 2 && all[0].value !== '' && all[1].value !== '') {
+      const objs = {
+        todo: all[0].value,
+        curdate: this.getcurdate,
+        dateinput: all[1].value
+      };
+
+      const jsonstring = JSON.stringify(objs);
+      this.getinputvalue = jsonstring;
+
+    } else {
+      alert('Input fields cannot be empty');
+    }
+  }
+
+  Updateinput(data) {
+    const parentEl = document.querySelector('.artp');
+    const getsiblins = document.querySelector('.chi');
+    const creatEl = document.createElement('li');
+    creatEl.setAttribute('class', 'chi');
+    creatEl.setAttribute('key-data', `${this.Creatkey(10)}`);
+
+    creatEl.innerHTML = `
+      <small class="small">${data.curdate}</small>
+      <h3 class="h3" data-value="${data.todo}">${data.todo}</h3>
+      <small class="dlist" time-data="${data.dateinput}">
+        <strong class="dolist">Do-list-@ : </strong> ${data.dateinput}
+      </small>
+      <input onclick="deletetodolist(this)" type="button" id="delete" class="btn" value="delete">
+      <input onclick="edit(this)" type="button" id="edit" class="btn" value="edit">
+    `;
+
+    parentEl.insertBefore(creatEl, getsiblins);
+    form.reset();
+  }
+
+  Triger() {
+    this.Getinputvalue();
+
+    if (this.getinputvalue) {
+      const convertjson = JSON.parse(this.getinputvalue);
+      this.Updateinput(convertjson);
+    } else {
+      console.error('Error getting input value');
+    }
+  }
+}
+
+function edit(param) {
+  let parentEl = param.parentElement;
+  const getkey = parentEl.getAttribute('key-data');
+  let parentnodes = parentEl.childNodes;
+  
+  let updatetor = new todolistContoller('', '', '', '', '', '');
+  updatetor.Edit(getkey, parentnodes);
+}
+
+function collectinputdate(ev) {
+  ev.preventDefault();
+  let updatetor = new todolistContoller('', '', '', '', '');
+  updatetor.Triger();
+}
+
+function deletetodolist(param) {
+  const elementid = param.getAttribute('id');
+  let deleter = new todolistContoller('', elementid, '', '', '');
+  deleter.Deletes();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var form = document.querySelector('#all');
+
+  form.addEventListener('submit',collectinputdate);
+
+
+/*setInterval(()=>{
+  const paramitervalues = form.querySelectorAll('input[name]')[1].name;
+  // Tab to edit
+ if(paramitervalues == 'submit'){
+ 
+ }else{
+   form.stopPropagation();
+ }
+},500);*/
+
+class todolistContoller {
+  constructor(edit,deletes,getinputvalue,getcurdate,key,key_data) {
+    this.edit = edit;
+    this.deletes = deletes;
+    this.getinputvalue = getinputvalue;
+    this.getcurdate = getcurdate;
+    this.key = key;
+    this.key_data = key_data;
+  }
+  
+  Edit(keys,nodes){
+    this.key = keys;
+    const obj = {
+      data: nodes[3].getAttribute('data-value'),
+   time:nodes[5].getAttribute('time-data')
+  };
+  
+ let stringify = JSON.stringify(obj);
+ this.key_data = stringify;
+
+let parsedt = JSON.parse(this.key_data);
+form.querySelector('textarea').value = parsedt.data;
+ form.querySelector('input[name="time"]').value = parsedt.time;
+ let subm = form.querySelector('input[name="submit"]');
+ subm.value = 'Commit Changes';
+ subm.setAttribute('name','commit');
+ subm.setAttribute('type','button');
+ subm.style.backgroundColor ="yellow";
+ const keyparent = document.querySelectorAll(`.chi`);
+ if (subm.getAttribute('name') === 'commit') {
+   subm.addEventListener('click',()=>{
+     for (var i = 0; i < keyparent.length; i++) {
+       // Tab to edit
+     if ( keyparent[i].getAttribute('key-data') === this.key){
+       console.log(keyparent[i].getAttribute('key-data'));
+        break;
+     }
+     }
+     
+     
+     subm.value = 'Add';
+ subm.setAttribute('name','submit');
+ subm.style.backgroundColor ="lightblue";
+ form.reset();
+ setTimeout(()=>{
+  subm.setAttribute('type','submit');
+},50);
+console.log(form)
+   })
+  
+ }
+// setTimeout(()=>{
+  //  subm.setAttribute('type','submit');
+// },500);
+ 
+  }
+  
+  Deletes(){
+let childel = document.querySelector(`#${this.deletes}`);
+childel.parentElement.remove();
+  }
+  
+  Creatkey(keynum){
+    let i = 0;
+  let txt = '';
+  while (i < 10) {
+    // random 10 munbers
+     let genarateramdomkeyid = Math.floor(Math.random()*keynum);
+    txt += genarateramdomkeyid;
+    i++
+  }
+  return txt;
+  }
+  
+    
+  Getcurdate(){
+    let t = new Date();
+ var ttostring = t.toLocaleString();
+ this.getcurdate = ttostring;
+  }
+  
+  
+  Getinputvalue(){
+    
+    this.Getcurdate();
+    const all = document.querySelectorAll('#all input[type="datetime-local"], #all textarea');
+
+    
+    if (all[0].value !=='' && all[1].value !== '') {
+     
+
+    const objs = {
+      todo: all[0].value,
+    curdate: this.getcurdate,
+    dateinput:all[1].value
+    };
+    
+     const jsonstring = JSON.stringify(objs);
+    this.getinputvalue = jsonstring;
+    
+  }else{
+  
+  alert('cant leave input empty');
+  }
+    
+  }
+ 
+    
+  
+
+  Updateinput(data){
+ 
+  const parentEl = document.querySelector('.artp');
+  const getsiblins = document.querySelector('.chi');
+  const creatEl = document.createElement('li');
+   creatEl.setAttribute('class','chi');  
+   creatEl.setAttribute('key-data',`${this.Creatkey(10)}`);
+
+  creatEl.innerHTML=`
+   <small class="small">${data.curdate}</small>
+     <h3 class="h3" data-value="${data.todo}">${data.todo}</h3>
+     <small  class="dlist" time-data="${data.dateinput}"><strong class="dolist">Do-list-@ : </strong> ${data.dateinput}</small>
+      <input onclick="deletetodolist(this)"  type="button" id="delete" class="btn" value="delete">   
+           <input  onclick="edit(this)" type="button" id="edit" class="btn" value="edit">
+  `;
+  //console.log(parentEl);
+      parentEl.insertBefore(creatEl,getsiblins);
+      form.reset();
+  }
+
+  Triger(){
+      this.Getinputvalue();
+       
+  const convertjson = JSON.parse(this.getinputvalue);
+   this.Updateinput(convertjson);
+
+//  console.log(convertjson.todo);
+}
+}
+
+
+function edit(param) {
+let parentEl =  param.parentElement;
+const getkey = parentEl.getAttribute('key-data');
+let parentnodes = parentEl.childNodes;
+  // Tab to edit
+  let updatetor = new todolistContoller('', '','', '','','');
+   updatetor.Edit(getkey,parentnodes);
+}
+
+
+
+function collectinputdate(ev) {
+  // Tab to edit
+  
+  ev.preventDefault();
+  let updatetor = new todolistContoller('', '','','', '');
+  updatetor.Triger();
+  
+
+}
+
+
+function deletetodolist(param){
+const elementid =  param.getAttribute('id');
+  let deleter = new todolistContoller('', elementid, '', '','');
+  deleter.Deletes();
+};
+
+
+
+
+  
+  
+  
+  
+  var form = document.querySelector('#all');
+
+form.addEventListener('submit', collectinputdate);
+
+/*setInterval(()=>{
+  const paramitervalues = form.querySelectorAll('input[name]')[1].name;
+  // Tab to edit
+ if(paramitervalues == 'submit'){
+ 
+ }else{
+   event.stopPropagation(); // Corrected stopPropagation usage
+ }
+},500);*/
+
+class todolistContoller {
+  constructor(edit, deletes, getinputvalue, getcurdate, key, key_data) {
+    this.edit = edit;
+    this.deletes = deletes;
+    this.getinputvalue = getinputvalue;
+    this.getcurdate = getcurdate;
+    this.key = key;
+    this.key_data = key_data;
+  }
+
+  Edit(keys, nodes) {
+    this.key = keys;
+
+    // Use safer node selection based on class or attribute
+    const obj = {
+      data: nodes[3]?.getAttribute('data-value'),  // Use optional chaining to avoid errors
+      time: nodes[5]?.getAttribute('time-data')
+    };
+
+    let stringify = JSON.stringify(obj);
+    this.key_data = stringify;
+
+    let parsedt = JSON.parse(this.key_data);
+    form.querySelector('textarea').value = parsedt.data;
+    form.querySelector('input[name="time"]').value = parsedt.time;
+
+    let subm = document.querySelector('#add');
+    
+    
+    subm.value = 'Commit Changes';
+    subm.setAttribute('name', 'commit');
+    subm.setAttribute('type', 'button');
+    subm.style.backgroundColor = "yellow";
+
+    const keyparent = document.querySelectorAll(`.chi`);
+    
+    
+  }
+  Commit(subm){
+    console.log('defined');
+    subm.addEventListener('click', () => {
+      if (subm.getAttribute('name') =='commit' && subm.getAttribute('type') == 'button'){
+      
+        subm.value = 'Add';
+        subm.setAttribute('name', 'submit');
+        subm.style.backgroundColor = "lightblue";
+          subm.setAttribute('type', 'submit');
+         
+        for (var i = 0; i < keyparent.length; i++) {
+          // Tab to edit
+          if (keyparent[i].getAttribute('key-data') === this.key) {
+            console.log(keyparent[i].getAttribute('key-data'));
+            break;
+          }
+        }
+      }
+        form.reset();
+      });
+  }
+
+  Deletes() {
+    let childel = document.querySelector(`#${this.deletes}`);
+    if (childel && childel.parentElement) {
+      childel.parentElement.remove();
+    } else {
+      console.error('Element not found for deletion');
+    }
+  }
+
+  Creatkey(keynum) {
+    let i = 0;
+    let txt = '';
+    while (i < 10) {
+      // Random 10 numbers
+      let genarateramdomkeyid = Math.floor(Math.random() * keynum);
+      txt += genarateramdomkeyid;
+      i++;
+    }
+    return txt;
+  }
+
+  Getcurdate() {
+    let t = new Date();
+    var ttostring = t.toLocaleString();
+    this.getcurdate = ttostring;
+  }
+
+  Getinputvalue(all) {
+    this.Getcurdate();
+  
+      
+    if (all.length >= 2 && all[0].value !== '' && all[1].value !== '') {
+      const objs = {
+        todo: all[0].value,
+        curdate: this.getcurdate,
+        dateinput: all[1].value
+      };
+
+      const jsonstring = JSON.stringify(objs);
+      this.getinputvalue = jsonstring;
+
+    } else {
+      alert('Input fields cannot be empty');
+    }
+  }
+
+  Updateinput(data) {
+    const parentEl = document.querySelector('.artp');
+    const getsiblins = document.querySelector('.chi');
+    const creatEl = document.createElement('li');
+    creatEl.setAttribute('class', 'chi');
+    creatEl.setAttribute('key-data', `${this.Creatkey(10)}`);
+
+    creatEl.innerHTML = `
+      <small class="small">${data.curdate}</small>
+      <h3 class="h3" data-value="${data.todo}">${data.todo}</h3>
+      <small class="dlist" time-data="${data.dateinput}">
+        <strong class="dolist">Do-list-@ : </strong> ${data.dateinput}
+      </small>
+      <input onclick="deletetodolist(this)" type="button" id="delete" class="btn" value="delete">
+      <input onclick="edit(this)" type="button" id="edit" class="btn" value="edit">
+    `;
+
+    parentEl.insertBefore(creatEl, getsiblins);
+    form.reset();
+  }
+
+  Triger() {
+
+    const all = document.querySelectorAll('#all input[type="datetime-local"], #all textarea');
+    this.Getinputvalue(all);
+
+    if (this.getinputvalue) {
+      const convertjson = JSON.parse(this.getinputvalue);
+      this.Updateinput(convertjson);
+    } else {
+      console.error('Error getting input value');
+    }
+  }
+}
+
+function edit(param) {
+  let parentEl = param.parentElement;
+  const getkey = parentEl.getAttribute('key-data');
+  let parentnodes = parentEl.childNodes;
+  
+  let updatetor = new todolistContoller('', '', '', '', '', '');
+  updatetor.Edit(getkey, parentnodes);
+}
+
+let commit = form.querySelector('#add input[name="button"]');
+  commit.addEventListener('click',(param)=>{
+  let updatetor = new todolistContoller('', '', '', '', '', '');
+  updatetor.Commit(param);
+  // Tab to edit
+  /*if (param.getAttribute('type')=='button') {
+    console.log('yes');
+  }*/
+});
+
+
+
+function collectinputdate(ev) {
+  ev.preventDefault();
+  let updatetor = new todolistContoller('', '', '', '', '');
+  updatetor.Triger();
+}
+
+function deletetodolist(param) {
+  const elementid = param.getAttribute('id');
+  let deleter = new todolistContoller('', elementid, '', '', '');
+  deleter.Deletes();
+}
+
+
+
+
+
+
+
+class todolistContoller {
+  constructor() {
+    this.todolist = [];
+    this.initializeData();
+  }
+  
+  
+  initializeData(){
+     this.parentEl = document.querySelector('.artp');
+    this.fetchInputdata = document.querySelectorAll('#all .mtodo');
+    this.submitdata = document.querySelector('#all');
+    this.btn = this.submitdata.querySelector('#add');
+
+         this.submitdata.addEventListener('submit',(e)=>{
+      e.preventDefault();
+      console.log(this.btn.value)
+      if (this.btn.value == "Add") {
+          this.addNewTask();
+      }
+    
+    });
+  }
+  
+  
+  addNewTask(){
+    let trimtask1 = this.fetchInputdata[0].value.trim();
+        let trimtask2 = this.fetchInputdata[1].value.trim();
+        
+    if (trimtask1 === "" && trimtask2 === "") return;
+    
+    const tasks = {
+      id:this.Creatkey(10),
+      task:this.fetchInputdata[0].value.trim(),
+      timetodo:this.fetchInputdata[1].value.trim(),
+      currenttime:this.Getcurdate(),
+      editable:false
+    };
+    this.todolist.unshift(tasks);
+    this.submitdata.reset();
+    //console.log(this.todolist[0]);
+    this.renderdata();
+   
+  }
+
+
+  editData(data_id) {
+    this.btn.value ='commit';
+    this.btn.style.backgroundColor ='yellow';
+ const task = this.todolist.find(item => item.id === data_id);
+ task.editable = !this.editable; 
+ 
+ this.renderdata();
+  }
+  
+  deletedata(data_id){
+    this.todolist = this.todolist.filter(item => item.id !== data_id);
+    
+   this.renderdata();
+    
+  }
+    
+  commitData(data_id, tasks, timetodo){
+      const newtask = this.todolist.find(item => item.id === data_id);
+      newtask.task = tasks;
+      newtask.timetodo = timetodo;
+      newtask.editable = false;
+      this.btn.value ='Add';
+      this.btn.style.backgroundColor ='lightblue';
+      
+      this.renderdata();
+     this.submitdata.reset();
+    }
+    
+  Creatkey(keynum) {
+    let i = 0;
+    let txt = '';
+    while (i < 10) {
+      // Random 10 numbers
+      let genarateramdomkeyid = Math.floor(Math.random() * keynum);
+      txt += genarateramdomkeyid;
+      i++;
+    }
+    return txt;
+  }
+
+  Getcurdate() {
+    let t = new Date();
+    var ttostring = t.toLocaleString();
+    return ttostring;
+  }
+
+  
+  renderdata() {
+    this.parentEl.innerHTML =" ";
+    this.todolist.forEach(data =>{
+      let creatEl = document.createElement('li');
+          creatEl.setAttribute('class', 'chi');
+      if (data.editable) {
+        this.fetchInputdata[0].value = data.task;
+        this.fetchInputdata[1].value = data.timetodo;
+
+     if (this.btn.value === 'commit') {
+          this.btn.addEventListener('click',()=> {
+            this.commitData(data.id,this.fetchInputdata[0].value.trim(),this.fetchInputdata[1].value.trim())
+            //console.log(trimtask1+" "+trimtask2)
+          });
+      
+        }
+        creatEl.innerHTML = `
+              <small class="small">${data.currenttime}</small>
+              <h3 class="h3" data-value="${this.fetchInputdata[0].value.trim()}">${data.task}</h3>
+              <small class="dlist" time-data="${this.fetchInputdata[1].value.trim()}">
+                <strong class="dolist">Do-list-@ : </strong> ${this.fetchInputdata[1].value.trim()}
+              </small>
+               `;
+        
+      }else{
+        creatEl.innerHTML = `
+      <small class="small">${data.currenttime}</small>
+      <h3 class="h3" data-value="${data.task}">${data.task}</h3>
+      <small class="dlist" time-data="${data.timetodo}">
+        <strong class="dolist">Do-list-@ : </strong> ${data.timetodo}
+      </small>
+       `;
+        
+      }
+     
+      const editbtn = document.createElement('button');
+      
+      editbtn.setAttribute('id','edit');
+      editbtn.classList.add('btn');
+      editbtn.textContent = 'edit';
+   
+      editbtn.addEventListener('click',()=>this.editData(data.id));
+    
+      
+      const deletebtn = document.createElement('button');
+      deletebtn.setAttribute('id','delete');
+      deletebtn.classList.add('btn');
+      deletebtn.textContent = 'delete';
+      deletebtn.addEventListener('click',()=>this.deletedata(data.id));
+
+    creatEl.appendChild(deletebtn);
+      creatEl.appendChild(editbtn);
+    this.parentEl.appendChild(creatEl);
+    
+    
+          
+    });
+  
+  }
+
+  
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new todolistContoller();
+});
+
+
+
+
+
+
+
+
+
+
+
+class todolistController {
+  constructor() {
+    this.todolist = [];
+    this.initializeData();
+  }
+
+  initializeData() {
+    this.parentEl = document.querySelector('.artp');  // Targeting the <ul> for tasks
+    this.fetchInputdata = document.querySelectorAll('#all .mtodo'); // Targeting the textarea and datetime input
+    this.submitdata = document.querySelector('#all'); // Targeting the form element
+    this.btn = this.submitdata.querySelector('#add'); // Targeting the submit button
+     this.addAttach();
+    
+  }
+  addAttach(){
+     const newbtn = this.btn.cloneNode(true);
+    this.btn.replaceWith(newbtn);
+    this.btn = newbtn;
+    
+    this.submitdata.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (this.btn.value === "Add") {
+        this.addNewTask();
+      }
+    });
+  }
+
+  addNewTask() {
+    let trimtask1 = this.fetchInputdata[0].value.trim();  // Task description
+    let trimtask2 = this.fetchInputdata[1].value.trim();  // Date and time input
+
+    if (trimtask1 === "" || trimtask2 === "") return; // Ensure no empty tasks are added
+
+    const tasks = {
+      id: this.Creatkey(10),
+      task: trimtask1,
+      timetodo: trimtask2,
+      currenttime: this.Getcurdate(),
+      editable: false
+    };
+
+    this.todolist.unshift(tasks);  // Add new task to the beginning of the list
+    this.submitdata.reset();  // Clear the form after adding the task
+    this.renderdata();  // Re-render the task list
+  }
+
+  editData(data_id) {
+    const task = this.todolist.find(item => item.id === data_id);
+    task.editable = !task.editable; // Toggle the editable state
+
+    this.btn.value = 'commit';
+    this.btn.style.backgroundColor = 'yellow';
+
+     const newbtn = this.btn.cloneNode(true);
+    this.btn.replaceWith(newbtn); // Remove old event listeners
+    this.btn = newbtn;
+    
+    this.btn.addEventListener('click', () => {
+      this.commitData(data_id, this.fetchInputdata[0].value.trim(), this.fetchInputdata[1].value.trim());
+    });
+
+    this.renderdata();
+  }
+
+  deletedata(data_id) {
+    this.todolist = this.todolist.filter(item => item.id !== data_id);
+    this.renderdata();
+  }
+
+  commitData(data_id, tasks, timetodo) {
+    const newtask = this.todolist.find(item => item.id === data_id);
+    newtask.task = tasks;
+    newtask.timetodo = timetodo;
+    newtask.editable = false;
+
+    this.btn.value = 'Add';
+    this.btn.style.backgroundColor = 'lightblue';
+    this.renderdata();
+    console.log(this.btn)
+    this.submitdata.reset();
+  }
+
+  Creatkey(keynum) {
+    let txt = '';
+    for (let i = 0; i < 10; i++) {
+      txt += Math.floor(Math.random() * keynum);
+    }
+    return txt;
+  }
+
+  Getcurdate() {
+    let t = new Date();
+    return t.toLocaleString();
+  }
+
+  renderdata() {
+    this.parentEl.innerHTML = "";  // Clear the current tasks
+
+    this.todolist.forEach(data => {
+      let creatEl = document.createElement('li');
+      creatEl.setAttribute('class', 'chi');
+
+      creatEl.innerHTML = `
+        <small class="small">${data.currenttime}</small>
+        <h3 class="h3" data-value="${data.task}">${data.task}</h3>
+        <small class="dlist" time-data="${data.timetodo}">
+          <strong class="dolist">Do-list-@ : </strong> ${data.timetodo}
+        </small>
+      `;
+
+      if (data.editable) {
+        this.fetchInputdata[0].value = data.task;
+        this.fetchInputdata[1].value = data.timetodo;
+      }
+
+      const editbtn = document.createElement('button');
+      editbtn.setAttribute('id', 'edit');
+      editbtn.classList.add('btn');
+      editbtn.textContent = 'edit';
+      editbtn.addEventListener('click', () => this.editData(data.id));
+
+      const deletebtn = document.createElement('button');
+      deletebtn.setAttribute('id', 'delete');
+      deletebtn.classList.add('btn');
+      deletebtn.textContent = 'delete';
+      deletebtn.addEventListener('click', () => this.deletedata(data.id));
+
+      creatEl.appendChild(deletebtn);
+      creatEl.appendChild(editbtn);
+      this.parentEl.appendChild(creatEl);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  new todolistController();
+});
+
+
+
+
+
+
+
+
+
+
+
+
+class todolistController {
+  constructor() {
+    this.todolist = [];
+    this.initializeData();
+  }
+
+  initializeData() {
+    this.parentEl = document.querySelector('.artp');  // Targeting the <ul> for tasks
+    this.fetchInputdata = document.querySelectorAll('#all .mtodo'); // Targeting the textarea and datetime input
+    this.submitdata = document.querySelector('#all'); // Targeting the form element
+    this.btn = this.submitdata.querySelector('#add'); // Targeting the submit button
+     this.addAttach();
+    
+  }
+  addAttach(){
+     const newbtn = this.btn.cloneNode(true);
+    this.btn.replaceWith(newbtn);
+    this.btn = newbtn;
+    
+    this.submitdata.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (this.btn.value === "Add") {
+        this.addNewTask();
+      }
+    });
+  }
+
+  addNewTask() {
+    let trimtask1 = this.fetchInputdata[0].value.trim();  // Task description
+    let trimtask2 = this.fetchInputdata[1].value.trim();  // Date and time input
+
+    if (trimtask1 === "" || trimtask2 === "") return; // Ensure no empty tasks are added
+
+    const tasks = {
+      id: this.Creatkey(10),
+      task: trimtask1,
+      timetodo: trimtask2,
+      currenttime: this.Getcurdate(),
+      editable: false
+    };
+
+    this.todolist.unshift(tasks);  // Add new task to the beginning of the list
+    this.submitdata.reset();  // Clear the form after adding the task
+    this.renderdata();  // Re-render the task list
+  }
+
+  editData(data_id) {
+    const task = this.todolist.find(item => item.id === data_id);
+    task.editable = !task.editable; // Toggle the editable state
+
+    this.btn.value = 'commit';
+    this.btn.style.backgroundColor = 'yellow';
+
+     const newbtn = this.btn.cloneNode(true);
+    this.btn.replaceWith(newbtn); // Remove old event listeners
+    this.btn = newbtn;
+    
+    this.btn.addEventListener('click', () => {
+      this.commitData(data_id, this.fetchInputdata[0].value.trim(), this.fetchInputdata[1].value.trim());
+    });
+
+    this.renderdata();
+  }
+
+  deletedata(data_id) {
+    this.todolist = this.todolist.filter(item => item.id !== data_id);
+    this.renderdata();
+  }
+
+  commitData(data_id, tasks, timetodo) {
+    const newtask = this.todolist.find(item => item.id === data_id);
+    newtask.task = tasks;
+    newtask.timetodo = timetodo;
+    newtask.editable = false;
+
+    this.btn.value = 'Add';
+    this.btn.style.backgroundColor = 'lightblue';
+    this.addAttach();
+    this.renderdata();
+    this.submitdata.reset();
+  }
+
+  Creatkey(keynum) {
+    let txt = '';
+    for (let i = 0; i < 10; i++) {
+      txt += Math.floor(Math.random() * keynum);
+    }
+    return txt;
+  }
+
+  Getcurdate() {
+    let t = new Date();
+    return t.toLocaleString();
+  }
+
+  renderdata() {
+    this.parentEl.innerHTML = "";  // Clear the current tasks
+
+    this.todolist.forEach(data => {
+      let creatEl = document.createElement('li');
+      creatEl.setAttribute('class', 'chi');
+
+      creatEl.innerHTML = `
+        <small class="small">${data.currenttime}</small>
+        <h3 class="h3" data-value="${data.task}">${data.task}</h3>
+        <small class="dlist" time-data="${data.timetodo}">
+          <strong class="dolist">Do-list-@ : </strong> ${data.timetodo}
+        </small>
+      `;
+
+      if (data.editable) {
+        this.fetchInputdata[0].value = data.task;
+        this.fetchInputdata[1].value = data.timetodo;
+      }
+
+      const editbtn = document.createElement('button');
+      editbtn.setAttribute('id', 'edit');
+      editbtn.classList.add('btn');
+      editbtn.textContent = 'edit';
+      editbtn.addEventListener('click', () => this.editData(data.id));
+
+      const deletebtn = document.createElement('button');
+      deletebtn.setAttribute('id', 'delete');
+      deletebtn.classList.add('btn');
+      deletebtn.textContent = 'delete';
+      deletebtn.addEventListener('click', () => this.deletedata(data.id));
+
+      creatEl.appendChild(deletebtn);
+      creatEl.appendChild(editbtn);
+      this.parentEl.appendChild(creatEl);
+    });
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  new todolistController();
+});
